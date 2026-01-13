@@ -1,21 +1,24 @@
 const fastify = require('fastify');
+const crypto = require('crypto');
 
 const server = fastify({ logger: true });
 
 
 const courses = [
-    { id: 1, name: 'Introduction to Programming' },
-    { id: 2, name: 'Advanced JavaScript' },
-    { id: 3, name: 'Database Management' },
+    { id: '1', name: 'Introduction to Programming' },
+    { id: '2', name: 'Advanced JavaScript' },
+    { id: '3', name: 'Database Management' },
 ]
 
 server.get('/courses', ()=> {
-    return courses;
+    return { courses };
 });
 
-server.post('/courses', () => {
-    courses.push({ id: 4, name: 'New Course Added' });
-    return { message: 'Course added successfully' };
+server.post('/courses', (request, reply) => {
+    let courseId = crypto.randomUUID()
+    courses.push({ id: courseId, name: 'New Course Added' });
+
+    return reply.code(201).send({courseId});
 });
 
 server.listen({port: 3333}).then(() => {
