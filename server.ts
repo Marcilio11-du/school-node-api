@@ -1,5 +1,8 @@
-const fastify = require('fastify');
-const crypto = require('crypto');
+//const fastify = require('fastify');
+//const crypto = require('crypto');
+
+import fastify from 'fastify';
+import crypto from 'node:crypto';
 
 const server = fastify({ logger: true });
 
@@ -15,7 +18,12 @@ server.get('/courses', ()=> {
 });
 
 server.post('/courses', (request, reply) => {
-    let courseTitle = request.body.courseTitle;
+    type Body = {
+        courseTitle: string;
+    }
+    let body = request.body as Body;
+    let courseTitle = body.courseTitle;
+    
     let courseId = crypto.randomUUID()
     courses.push({ id: courseId, name: courseTitle });
 
@@ -26,7 +34,11 @@ server.post('/courses', (request, reply) => {
 });
 
 server.get('/courses/:id', (request, reply) => {
-    const { id } = request.params;
+
+    type Params = {
+        id: string;
+    }
+    const { id } = request.params as Params;
     const course = courses.find(course => course.id === id);
 
     if(course) {
