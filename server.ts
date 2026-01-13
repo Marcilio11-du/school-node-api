@@ -23,7 +23,7 @@ server.post('/courses', (request, reply) => {
     }
     let body = request.body as Body;
     let courseTitle = body.courseTitle;
-    
+
     let courseId = crypto.randomUUID()
     courses.push({ id: courseId, name: courseTitle });
 
@@ -43,6 +43,21 @@ server.get('/courses/:id', (request, reply) => {
 
     if(course) {
         return {course};
+    }
+
+    return reply.code(404).send({ message: 'Course not found' });
+})
+
+server.delete('/courses/:id', (request, reply) => {
+    type Params = {
+        id: string;
+    }
+    const { id } = request.params as Params;
+    const courseIndex = courses.findIndex(course => course.id === id);
+
+    if(courseIndex !== -1) {
+        courses.splice(courseIndex, 1);
+        return reply.code(204).send();
     }
 
     return reply.code(404).send({ message: 'Course not found' });
