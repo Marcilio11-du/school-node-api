@@ -15,11 +15,26 @@ server.get('/courses', ()=> {
 });
 
 server.post('/courses', (request, reply) => {
+    let courseTitle = request.body.courseTitle;
     let courseId = crypto.randomUUID()
-    courses.push({ id: courseId, name: 'New Course Added' });
+    courses.push({ id: courseId, name: courseTitle });
 
-    return reply.code(201).send({courseId});
+    return reply.code(201).send({
+        courseId,
+        courseTitle
+    });
 });
+
+server.get('/courses/:id', (request, reply) => {
+    const { id } = request.params;
+    const course = courses.find(course => course.id === id);
+
+    if(course) {
+        return {course};
+    }
+
+    return reply.code(404).send({ message: 'Course not found' });
+})
 
 server.listen({port: 3333}).then(() => {
   console.log('Server is running on port 3333');
